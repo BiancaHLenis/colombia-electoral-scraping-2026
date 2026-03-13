@@ -7,15 +7,16 @@
 # Representantes 2026 (circunscripción territorial departamental)
 # municipio por municipio, incluyendo votos por candidato Y por
 # partido. Sí, esta vez también hay candidatos. Bienvenidos a la
-# Cámara, donde todo es más complicado que en el Senado.
+# Cámara, donde todo es más complicado que en el Senado, porque 
+# este script, me tomó más de lo pensado
 #
 # Diferencia clave con el scraper del Senado:
-#   El Senado tiene circunscripción NACIONAL — todos votan por
-#   los mismos partidos. La Cámara tiene circunscripción
-#   DEPARTAMENTAL — cada departamento tiene sus propias listas,
-#   sus propias coaliciones y sus propios códigos de partido.
+#   El Senado tiene circunscripción NACIONAL (todos votan por
+#   los mismos partidos). La Cámara tiene circunscripción
+#   DEPARTAMENTAL (cada departamento tiene sus propias listas,
+#   sus propias coaliciones y sus propios códigos de partido)
 #   Eso explica por qué el diccionario de partidos aquí tiene
-#   más de 100 entradas. No es un error. Es Colombia.
+#   más de 100 entradas. No es un error, es la democracia.
 #
 # Output:
 #   - df_camara.rds     : base de datos en formato R
@@ -34,7 +35,7 @@
 
 # ============================================================
 # 1. LIBRERÍAS
-# Sin estas librerías este script es solo texto con ilusiones.
+#
 #   - httr     : hace las peticiones HTTP (el cartero)
 #   - jsonlite : convierte JSON en objetos R (el traductor)
 #   - dplyr    : manipulación de datos (la navaja suiza)
@@ -84,8 +85,6 @@ limpiar_pct <- function(x) {
 #   4. En los headers del request, copia el valor de "Cookie"
 #   5. Pégalo abajo donde dice PEGAR_AQUI_LA_COOKIE
 #
-# ⚠️  Nunca subas tu cookie real a GitHub.
-#     Reemplázala siempre con el placeholder antes de publicar.
 # ============================================================
 
 headers <- c(
@@ -269,7 +268,7 @@ extraer_participacion_camara <- function(cod_municipio) {
 # Descargamos el directorio oficial de municipios desde la
 # Registraduría. Es el mapa que le dice al scraper dónde ir.
 # Sin esto, estaríamos adivinando códigos de municipio.
-# Spoiler: no terminaría bien.
+# Spoiler: no terminaría bien, ya pasé por eso, te lo estoy ahorrando
 #
 # Estructura del JSON:
 #   nom$amb[[1]]$ambitos → lista de entidades geográficas
@@ -347,10 +346,11 @@ cat("Municipios cargados:", nrow(df_municipios), "\n")
 #   - Backup automático cada 200 municipios porque la vida es
 #     incierta y el internet colombiano también
 #   - Sys.sleep(0.3): pausa de cortesía con el servidor
-#     Sin esto eres ese invitado que llega, come todo y se va
+#     Sin esto eres ese invitado que llega, come todo y se va y
+#     ni se despide (indio comido, indio ido, dice mi abuela)                      
 #
 # Tiempo estimado: ~1,189 × 0.3s ≈ 6 minutos.
-# Ve por un tinto. El script no te necesita.
+# Ve por un tinto o 10 minutos de uan serie, el script no te necesita.
 # ============================================================
 
 df_camara_list <- list()   # acumula dataframes de votos por candidato/partido
@@ -363,7 +363,7 @@ for (i in seq_len(total)) {
     muni  <- df_municipios$municipio[i]
     depto <- df_municipios$departamento[i]
 
-    # Progreso cada 50 municipios. El silencio en un loop largo
+    # Progreso cada 50 municipios, el silencio en un loop largo
     # es señal de que algo está mal. O de que terminó. Difícil saberlo.
     if (i %% 50 == 0) cat(sprintf("[%d/%d] %s - %s\n", i, total, depto, muni))
 
@@ -411,7 +411,7 @@ cat("Errores (municipios sin datos):", length(errores), "\n")
 # Aquí unimos los votos con la participación y mapeamos los
 # códigos de partido a nombres legibles.
 #
-# ⚠️  ADVERTENCIA: el diccionario de la Cámara es MUCHO más
+# UNA ADVERTENCIA: el diccionario de la Cámara es MUCHO más
 # largo que el del Senado. Esto es normal y esperado.
 #
 # ¿Por qué? Porque la Cámara tiene circunscripción departamental.
@@ -645,7 +645,7 @@ writexl::write_xlsx(
     "~/Downloads/elecciones 2026/camara_2026.xlsx"
 )
 
-# Resumen final. Para la Cámara espera más filas que el Senado
+# Resumen final. Para la Cámara espera más filas que el Senado, no te alarmes
 # porque hay una fila por candidato, no solo por partido.
 cat("Filas totales:", nrow(df_camara_final), "\n")
 cat("Municipios únicos:", n_distinct(df_camara_final$cod_municipio), "\n")
